@@ -4,9 +4,10 @@ import "../../styles/clientbookstyles.css"
 
 function ClientBook() {
   const [clients, setClients] = useState([]);
+  const [searchName, setSearchName] = useState("")
 
   useEffect(() => {
-    fetch('/api/clients') // ✅ Make sure this is the correct route
+    fetch('/api/clients') 
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -22,10 +23,23 @@ function ClientBook() {
   }, []);
 
   return (
+    <div>
+      <input
+        placeholder='Client Name'
+        value={searchName}
+        onChange={(e) => setSearchName(e.target.value)}
+      />
     <div className="ClientBookContainer">
-      {clients.map((client) => (
-        <ClientCard client={client} key={client._id}/>
-      ))}
+      {clients
+        .filter((client) =>
+          !searchName
+            ? true
+            : client.name.toLowerCase().includes(searchName.toLowerCase())
+        )
+        .map((client) => (
+          <ClientCard client={client} key={client._id} />
+        ))}
+    </div>
     </div>
   );
 }
